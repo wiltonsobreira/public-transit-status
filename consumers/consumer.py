@@ -49,7 +49,7 @@ class KafkaConsumer:
         self.broker_properties = {
             "bootstrap.servers": BROKER_URL,
             "group.id": 0,
-            "auto.offset.reset": "earliest"
+            "auto.offset.reset": "earliest" if offset_earliest else "latest"
         }        
 
         # # TODO: Create the Consumer, using the appropriate type.
@@ -135,8 +135,9 @@ class KafkaConsumer:
             logger.info("_consume is incomplete - skipping")
             return 0
         else:
-            print(f"consumed message {message.key()}: {message.value()}")
-            return 1        
+            self.message_handler(message)
+            logger.info(f"consumed message: {message}")
+            return 1    
 
 
     def close(self):
